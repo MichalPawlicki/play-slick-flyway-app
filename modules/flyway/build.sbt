@@ -8,10 +8,10 @@
 //$ export DB_DEFAULT_USER="sa"
 //$ export DB_DEFAULT_PASSWORD=""
 
-libraryDependencies += "org.flywaydb" % "flyway-core" % "4.0"
+libraryDependencies += "org.flywaydb" % "flyway-core" % "4.2.0"
 
-lazy val databaseUrl = sys.env.getOrElse("DB_DEFAULT_URL", "jdbc:h2:./test")
-lazy val databaseUser = sys.env.getOrElse("DB_DEFAULT_USER", "sa")
+lazy val databaseUrl = sys.env.getOrElse("DB_DEFAULT_URL", "jdbc:postgresql://localhost/isolated_slick_example")
+lazy val databaseUser = sys.env.getOrElse("DB_DEFAULT_USER", "")
 lazy val databasePassword = sys.env.getOrElse("DB_DEFAULT_PASSWORD", "")
 
 flywayLocations := Seq("classpath:db/migration")

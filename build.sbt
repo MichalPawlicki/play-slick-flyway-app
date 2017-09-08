@@ -23,7 +23,7 @@ lazy val root = (project in file("."))
 TwirlKeys.templateImports += "com.example.user.User"
 
 libraryDependencies += guice
-libraryDependencies += "com.h2database" % "h2" % "1.4.194"
+libraryDependencies += "org.postgresql" % "postgresql" % "42.1.4"
 
 // Automatic database migration available in testing
 fork in Test := true

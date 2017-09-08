@@ -11,12 +11,16 @@ import play.api.inject.{Binding, Module}
 import play.api.{Application, Configuration, Environment}
 
 /**
- * Set up an application factory that runs flyways migrations on in memory database.
- */
+  * Set up an application factory that runs flyways migrations on in memory database.
+  */
 trait MyApplicationFactory extends FakeApplicationFactory {
   def fakeApplication(): Application = {
     new GuiceApplicationBuilder()
-      .configure(Map("myapp.database.url" -> "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1"))
+      .configure(Map(
+        "myapp.database.url" -> "jdbc:postgresql://localhost/isolated_slick_example_test",
+        "myapp.database.user" -> "",
+        "myapp.database.password" -> ""
+      ))
       .bindings(new FlywayModule)
       .build()
   }
@@ -24,7 +28,7 @@ trait MyApplicationFactory extends FakeApplicationFactory {
 
 class FlywayModule extends Module {
   override def bindings(environment: Environment, configuration: Configuration): Seq[Binding[_]] = {
-    Seq(bind[FlywayMigrator].toSelf.eagerly() )
+    Seq(bind[FlywayMigrator].toSelf.eagerly())
   }
 }
 

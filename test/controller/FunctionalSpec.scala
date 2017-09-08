@@ -12,7 +12,7 @@ class FunctionalSpec extends PlaySpec with BaseOneAppPerSuite with MyApplication
 
   "HomeController" should {
 
-    "work with in memory h2 database" in {
+    "work with Postgres database" in {
       val future = route(app, FakeRequest(GET, "/")).get
       contentAsString(future) must include("myuser@example.com")
     }
