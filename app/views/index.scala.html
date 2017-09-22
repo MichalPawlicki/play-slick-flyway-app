@@ -1,6 +1,14 @@
-@(users: Seq[User])
+@(users: Seq[User], currentUser: Option[User])
 
 @main("Title Page") {
+    <div>
+        @currentUser.map { user =>
+            Logged in as: <strong>@user.email</strong>
+        }.getOrElse {
+            Browsing as a guest
+        }
+    </div>
+
     <h2>Users</h2>
 
     <table>

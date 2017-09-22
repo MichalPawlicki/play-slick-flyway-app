@@ -31,3 +31,13 @@ libraryDependencies += "org.flywaydb" % "flyway-core" % "4.1.2" % Test
 libraryDependencies += "com.typesafe.play" %% "play-ahc-ws" % "2.6.0-M4" % Test
 libraryDependencies += "org.scalatestplus.play" %% "scalatestplus-play" % "3.0.0-M3" % Test
 
+// Silhouette
+resolvers += "Atlassian Releases" at "https://maven.atlassian.com/public/"
+
+libraryDependencies ++= Seq(
+  "com.mohiva" %% "play-silhouette" % "5.0.0",
+  "com.mohiva" %% "play-silhouette-password-bcrypt" % "5.0.0",
+  "com.mohiva" %% "play-silhouette-crypto-jca" % "5.0.0",
+  "com.mohiva" %% "play-silhouette-persistence" % "5.0.0",
+  "com.mohiva" %% "play-silhouette-testkit" % "5.0.0" % "test"
+)
