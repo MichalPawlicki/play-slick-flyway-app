@@ -1,4 +1,6 @@
-@(users: Seq[User], currentUser: Option[User])
+@this(main: views.html.templates.main)
+
+@(users: Seq[User], currentUser: Option[User])(implicit messages: Messages)
 
 @main("Title Page") {
     <div>

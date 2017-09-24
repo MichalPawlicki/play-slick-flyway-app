@@ -11,6 +11,8 @@ trait UserDAO {
 
   def lookup(id: String): Future[Option[User]]
 
+  def findByEmail(email: String): Future[Option[User]]
+
   def all: Future[Seq[User]]
 
   def update(user: User): Future[Int]
@@ -25,4 +27,4 @@ trait UserDAO {
 /**
  * Implementation independent aggregate root.
  */
-case class User(id: String, email: String, createdAt: DateTime, updatedAt: Option[DateTime])
+case class User(id: String, email: String, createdAt: DateTime, updatedAt: Option[DateTime], passwordHash: String, isConfirmed: Boolean)

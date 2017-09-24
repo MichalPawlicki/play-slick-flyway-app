@@ -1,0 +1,8 @@
+@this(mainAuth: views.html.templates.mainAuth)
+
+@(user: User)(implicit messages:Messages)
+
+@mainAuth(Messages("finishSignUp.title"), tab="signup") {
+  <p>@Messages("finishSignUp.thanks", user.email)</p>
+  <p>@Messages("finishSignUp.instructions", user.email)</p>
+}

@@ -22,14 +22,20 @@ lazy val root = (project in file("."))
 
 TwirlKeys.templateImports += "com.example.user.User"
 
-libraryDependencies += guice
-libraryDependencies += "org.postgresql" % "postgresql" % "42.1.4"
-
 // Automatic database migration available in testing
 fork in Test := true
-libraryDependencies += "org.flywaydb" % "flyway-core" % "4.1.2" % Test
-libraryDependencies += "com.typesafe.play" %% "play-ahc-ws" % "2.6.0-M4" % Test
-libraryDependencies += "org.scalatestplus.play" %% "scalatestplus-play" % "3.0.0-M3" % Test
+
+libraryDependencies ++= Seq(
+  guice,
+  "org.postgresql" % "postgresql" % "42.1.4",
+  "org.webjars" %% "webjars-play" % "2.6.2",
+  "org.webjars" % "jquery" % "3.2.1",
+  "org.webjars" % "bootstrap" % "3.3.7",
+  "com.adrianhurt" %% "play-bootstrap" % "1.2-P26-B3",
+  "org.flywaydb" % "flyway-core" % "4.1.2" % Test,
+  "com.typesafe.play" %% "play-ahc-ws" % "2.6.0-M4" % Test,
+  "org.scalatestplus.play" %% "scalatestplus-play" % "3.0.0-M3" % Test
+)
 
 // Silhouette
 resolvers += "Atlassian Releases" at "https://maven.atlassian.com/public/"

@@ -1,0 +1,8 @@
+@this(main: views.html.templates.main)
+
+@(request:RequestHeader, exception:Throwable)(implicit messages:Messages)
+
+@main(Messages("error.serverError")) {
+  <h4>@Messages("error.serverError")</h4>
+  <div class="alert alert-danger" role="alert">@Messages(exception.getLocalizedMessage)</div>
+}

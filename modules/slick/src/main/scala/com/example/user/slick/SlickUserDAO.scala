@@ -11,27 +11,34 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.language.implicitConversions
 
 /**
- * A User DAO implemented with Slick, leveraging Slick code gen.
- *
- * Note that you must run "flyway/flywayMigrate" before "compile" here.
- *
- * @param db the slick database that this user DAO is using internally, bound through Module.
- * @param ec a CPU bound execution context.  Slick manages blocking JDBC calls with its
- *    own internal thread pool, so Play's default execution context is fine here.
- */
+  * A User DAO implemented with Slick, leveraging Slick code gen.
+  *
+  * Note that you must run "flyway/flywayMigrate" before "compile" here.
+  *
+  * @param db the slick database that this user DAO is using internally, bound through Module.
+  * @param ec a CPU bound execution context.  Slick manages blocking JDBC calls with its
+  *           own internal thread pool, so Play's default execution context is fine here.
+  */
 @Singleton
 class SlickUserDAO @Inject()(db: Database)(implicit ec: ExecutionContext) extends UserDAO with Tables {
 
-//  override val profile: JdbcProfile = _root_.slick.jdbc.H2Profile
+  //  override val profile: JdbcProfile = _root_.slick.jdbc.H2Profile
   override val profile: JdbcProfile = _root_.slick.jdbc.PostgresProfile
 
   import profile.api._
 
   private val queryById = Compiled(
     (id: Rep[String]) => Users.filter(_.id === id))
+  private val queryByEmail = Compiled(
+    (email: Rep[String]) => Users.filter(_.email === email))
 
   def lookup(id: String): Future[Option[User]] = {
     val f: Future[Option[UsersRow]] = db.run(queryById(id).result.headOption)
+    f.map(maybeRow => maybeRow.map(usersRowToUser))
+  }
+
+  def findByEmail(email: String): Future[Option[User]] = {
+    val f: Future[Option[UsersRow]] = db.run(queryByEmail(email).result.headOption)
     f.map(maybeRow => maybeRow.map(usersRowToUser))
   }
 
@@ -59,10 +66,10 @@ class SlickUserDAO @Inject()(db: Database)(implicit ec: ExecutionContext) extend
   }
 
   private def userToUsersRow(user: User): UsersRow = {
-    UsersRow(user.id, user.email, user.createdAt, user.updatedAt)
+    UsersRow(user.id, user.email, user.createdAt, user.updatedAt, user.passwordHash, user.isConfirmed)
   }
 
   private def usersRowToUser(usersRow: UsersRow): User = {
-    User(usersRow.id, usersRow.email, usersRow.createdAt, usersRow.updatedAt)
+    User(usersRow.id, usersRow.email, usersRow.createdAt, usersRow.updatedAt, usersRow.passwordHash, usersRow.isConfirmed)
   }
 }
