@@ -71,7 +71,7 @@ class Auth @Inject()(val cc: ControllerComponents,
 
   def startSignUp = silhouette.UserAwareAction.async { implicit request =>
     Future.successful(request.identity match {
-      case Some(user) => Redirect(routes.HomeController.index())
+      case Some(user) => Redirect(routes.Home.index())
       case None => Ok(startSignUpTemplate(signUpForm))
     })
   }
@@ -119,7 +119,7 @@ class Auth @Inject()(val cc: ControllerComponents,
               value <- silhouette.env.authenticatorService.init(authenticator)
               _ <- userIdentityService.confirm(loginInfo)
               _ <- userTokenService.remove(token.id)
-              result <- silhouette.env.authenticatorService.embed(value, Redirect(routes.HomeController.index()))
+              result <- silhouette.env.authenticatorService.embed(value, Redirect(routes.Home.index()))
             } yield result
         }
       case Some(token) =>
@@ -129,7 +129,7 @@ class Auth @Inject()(val cc: ControllerComponents,
 
   def signIn = silhouette.UserAwareAction.async { implicit request =>
     Future.successful(request.identity match {
-      case Some(user) => Redirect(routes.HomeController.index())
+      case Some(user) => Redirect(routes.Home.index())
       case None => Ok(signInTemplate(signInForm))
     })
   }
@@ -149,7 +149,7 @@ class Auth @Inject()(val cc: ControllerComponents,
               for {
                 authenticator <- silhouette.env.authenticatorService.create(loginInfo)
                 value <- silhouette.env.authenticatorService.init(authenticator)
-                result <- silhouette.env.authenticatorService.embed(value, Redirect(routes.HomeController.index()))
+                result <- silhouette.env.authenticatorService.embed(value, Redirect(routes.Home.index()))
               } yield result
           }
         }.recover {
@@ -161,6 +161,6 @@ class Auth @Inject()(val cc: ControllerComponents,
   }
 
   def signOut = silhouette.SecuredAction.async { implicit request =>
-    silhouette.env.authenticatorService.discard(request.authenticator, Redirect(routes.HomeController.index()))
+    silhouette.env.authenticatorService.discard(request.authenticator, Redirect(routes.Home.index()))
   }
 }

@@ -11,11 +11,11 @@ import play.api.mvc._
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class HomeController @Inject()(userDAO: UserDAO,
-                               cc: ControllerComponents,
-                               silhouette: Silhouette[SessionEnv],
-                               indexTemplate: views.html.index)
-                              (implicit ec: ExecutionContext)
+class Home @Inject()(userDAO: UserDAO,
+                     cc: ControllerComponents,
+                     silhouette: Silhouette[SessionEnv],
+                     indexTemplate: views.html.index)
+                    (implicit ec: ExecutionContext)
   extends AbstractController(cc) with I18nSupport {
 
   def index = silhouette.UserAwareAction.async { implicit request =>
