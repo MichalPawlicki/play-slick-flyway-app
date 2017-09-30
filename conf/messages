@@ -1,6 +1,6 @@
-app.title=developerWorks Play Demo
+app.title=MyApp
 
-navbar.welcome=developerWorks Play Demo
+navbar.welcome=MyApp
 navbar.toggle.nav=Toggle navigation
 navbar.index=Index
 navbar.profile=My Profile

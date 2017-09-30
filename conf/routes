@@ -4,7 +4,7 @@
 
 # Home page
 GET     /                           controllers.Home.index
-# GET     /profile                    controllers.Application.profile
+GET     /profile                    controllers.Home.profile
 
 # Authentication routes
 GET     /auth/signup                controllers.Auth.startSignUp

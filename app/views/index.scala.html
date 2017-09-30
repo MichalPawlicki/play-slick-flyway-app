@@ -1,8 +1,10 @@
-@this(main: views.html.templates.main)
+@import com.mohiva.play.silhouette.api.LoginInfo
 
-@(users: Seq[User], currentUser: Option[User])(implicit messages: Messages)
+@this(mainApp: views.html.templates.mainApp)
 
-@main("Title Page") {
+@(users: Seq[User], currentUser: Option[User], loginInfo: Option[LoginInfo])(implicit messages: Messages)
+
+@mainApp("Title Page", tab = "index", loggedUser = currentUser, loginInfo = loginInfo) {
 <div>
   @currentUser.map { user =>
   <span>

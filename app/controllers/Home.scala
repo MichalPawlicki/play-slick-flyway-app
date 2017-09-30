@@ -20,9 +20,14 @@ class Home @Inject()(userDAO: UserDAO,
 
   def index = silhouette.UserAwareAction.async { implicit request =>
     val currentUser = request.identity.map(_.user)
+    val loginInfo = request.authenticator.map(_.loginInfo)
     userDAO.all.map { users =>
-      Ok(indexTemplate(users, currentUser))
+      Ok(indexTemplate(users, currentUser, loginInfo))
     }
+  }
+
+  def profile = silhouette.SecuredAction.async { implicit request =>
+    ???
   }
 
 }
