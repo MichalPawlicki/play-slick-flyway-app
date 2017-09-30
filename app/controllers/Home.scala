@@ -14,20 +14,21 @@ import scala.concurrent.ExecutionContext
 class Home @Inject()(userDAO: UserDAO,
                      cc: ControllerComponents,
                      silhouette: Silhouette[SessionEnv],
-                     indexTemplate: views.html.index)
+                     indexTemplate: views.html.index,
+                     profileTemplate: views.html.profile)
                     (implicit ec: ExecutionContext)
   extends AbstractController(cc) with I18nSupport {
 
   def index = silhouette.UserAwareAction.async { implicit request =>
-    val currentUser = request.identity.map(_.user)
+    val loggedUser = request.identity.map(_.user)
     val loginInfo = request.authenticator.map(_.loginInfo)
     userDAO.all.map { users =>
-      Ok(indexTemplate(users, currentUser, loginInfo))
+      Ok(indexTemplate(users, loggedUser, loginInfo))
     }
   }
 
-  def profile = silhouette.SecuredAction.async { implicit request =>
-    ???
+  def profile = silhouette.SecuredAction { implicit request =>
+    Ok(profileTemplate(request.identity.user, request.authenticator.loginInfo))
   }
 
 }

@@ -1,0 +1,27 @@
+@import com.mohiva.play.silhouette.api.LoginInfo
+@import com.mohiva.play.silhouette.impl.providers.{CredentialsProvider,SocialProviderRegistry}
+
+@this(mainApp: views.html.templates.mainApp)
+
+@(loggedUser: User, loginInfo: LoginInfo)(implicit request:RequestHeader, messages: Messages)
+
+@mainApp(Messages("profile.title"), tab = "profile", loggedUser = Some(loggedUser), loginInfo = Some(loginInfo)) {
+  @request.flash.get("error").map { msg =>
+    @errors.alert(msg, "error")
+  }
+
+  <div class="col-md-8 col-md-offset-2">
+    <div class="row">
+      <h3 class="col-md-8 text-primary">@Messages("profile.title")</h3>
+      <hr class="col-md-12 small-margin-top"/>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <div class="row">
+          <p class="col-md-6 strong">@Messages("profile.email")</p>
+          <p class="col-md-6">@loggedUser.email</p>
+        </div>
+      </div>
+    </div>
+  </div>
+}
