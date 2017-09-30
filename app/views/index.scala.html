@@ -3,30 +3,35 @@
 @(users: Seq[User], currentUser: Option[User])(implicit messages: Messages)
 
 @main("Title Page") {
-    <div>
-        @currentUser.map { user =>
-            Logged in as: <strong>@user.email</strong>
-        }.getOrElse {
-            Browsing as a guest
-        }
-    </div>
+<div>
+  @currentUser.map { user =>
+  <span>
+    Logged in as: <strong>@user.email</strong>
+  </span>
+  <span>
+    <a href="@routes.Auth.signOut">@Messages("navbar.signout")</a>
+  </span>
+  }.getOrElse {
+  Browsing as a guest
+  }
+</div>
 
-    <h2>Users</h2>
+<h2>Users</h2>
 
-    <table>
-        <tr>
-            <th>Id</th>
-            <th>Email</th>
-            <th>Created At</th>
-            <th>Updated At</th>
-        </tr>
-        @for(user <- users){
-            <tr>
-                <td>@user.id</td>
-                <td>@user.email</td>
-                <td>@user.createdAt</td>
-                <td>@user.updatedAt</td>
-            </tr>
-        }
-    </table>
+<table>
+  <tr>
+    <th>Id</th>
+    <th>Email</th>
+    <th>Created At</th>
+    <th>Updated At</th>
+  </tr>
+  @for(user <- users) {
+  <tr>
+    <td>@user.id</td>
+    <td>@user.email</td>
+    <td>@user.createdAt</td>
+    <td>@user.updatedAt</td>
+  </tr>
+  }
+</table>
 }

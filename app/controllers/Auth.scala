@@ -159,4 +159,8 @@ class Auth @Inject()(val cc: ControllerComponents,
       }
     )
   }
+
+  def signOut = silhouette.SecuredAction.async { implicit request =>
+    silhouette.env.authenticatorService.discard(request.authenticator, Redirect(routes.HomeController.index()))
+  }
 }
