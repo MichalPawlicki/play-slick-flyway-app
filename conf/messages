@@ -82,6 +82,7 @@ error.passwordsDontMatch=Passwords don''t match
 error.serverError=Server error:
 error.noUser=The requested user can''t be found
 error.unregistered=The user {0} hasn''t finished the sign up process
+error.cannotAuthenticate=The provided credentials are invalid or the user {0} hasn''t finished the sign up process
 error.noProvider=Authentication provider ''{0}'' isn''t registered
 error.invalidCredentials=The supplied credentials are invalid
 error.notAuthenticated=The selected provider couldn''t authenticate you

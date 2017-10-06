@@ -21,7 +21,6 @@ import services.{UserIdentityService, UserTokenService}
 import utils.Mailer
 
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.Try
 
 object AuthForms {
 
@@ -102,22 +101,22 @@ class Auth @Inject()(val cc: ControllerComponents,
     signUpForm.bindFromRequest.fold(
       bogusForm => Future.successful(BadRequest(startSignUpTemplate(bogusForm))),
       signUpData => {
-        val loginInfo = LoginInfo(CredentialsProvider.ID, signUpData.email)
+        val email = signUpData.email
+        val loginInfo = LoginInfo(CredentialsProvider.ID, email)
         userIdentityService.retrieve(loginInfo).flatMap {
           case Some(_) =>
-            Future.successful(Redirect(routes.Auth.startSignUp()).flashing(
-              "error" -> Messages("error.userExists", signUpData.email)))
+            Future.successful(Ok(finishSignUpTemplate(email)))
           case None =>
             val passwordInfo = passwordHasher.hash(signUpData.password)
-            val user = User(id = UUID.randomUUID().toString, email = signUpData.email, createdAt = DateTime.now,
+            val user = User(id = UUID.randomUUID().toString, email = email, createdAt = DateTime.now,
               updatedAt = None, passwordHash = passwordInfo.password, isConfirmed = false)
-            val token = UserToken.create(user.id, signUpData.email, isSignUp = true)
+            val token = UserToken.create(user.id, email, isSignUp = true)
             for {
               _ <- userIdentityService.save(user)
               _ <- userTokenService.save(token)
             } yield {
-              mailer.welcome(signUpData.email, routes.Auth.signUp(token.id).absoluteURL())
-              Ok(finishSignUpTemplate(user))
+              mailer.welcome(email, routes.Auth.signUp(token.id).absoluteURL())
+              Ok(finishSignUpTemplate(email))
             }
         }
       }
@@ -158,12 +157,14 @@ class Auth @Inject()(val cc: ControllerComponents,
       bogusForm => Future.successful(BadRequest(signInTemplate(bogusForm))),
       signInData => {
         val credentials = Credentials(signInData.email, signInData.password)
+        val cannotAuthenticateResponse =
+          Redirect(routes.Auth.signIn()).flashing("error" -> Messages("error.cannotAuthenticate"))
         credentialsProvider.authenticate(credentials).flatMap { loginInfo =>
           userIdentityService.retrieve(loginInfo).flatMap {
             case None =>
-              Future.successful(Redirect(routes.Auth.signIn()).flashing("error" -> Messages("error.noUser")))
+              Future.successful(cannotAuthenticateResponse)
             case Some(userIdentity) if !userIdentity.user.isConfirmed =>
-              Future.successful(Redirect(routes.Auth.signIn()).flashing("error" -> Messages("error.unregistered", signInData.email)))
+              Future.successful(cannotAuthenticateResponse)
             case Some(_) =>
               for {
                 authenticator <- silhouette.env.authenticatorService.create(loginInfo)
@@ -172,8 +173,7 @@ class Auth @Inject()(val cc: ControllerComponents,
               } yield result
           }
         }.recover {
-          case e: ProviderException =>
-            Redirect(routes.Auth.signIn()).flashing("error" -> Messages("error.invalidCredentials"))
+          case e: ProviderException => cannotAuthenticateResponse
         }
       }
     )
