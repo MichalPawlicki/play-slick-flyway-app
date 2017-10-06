@@ -116,7 +116,7 @@ class Auth @Inject()(val cc: ControllerComponents,
               _ <- userIdentityService.save(user)
               _ <- userTokenService.save(token)
             } yield {
-              mailer.welcome(signUpData.email, routes.Auth.signUp(token.id.toString).absoluteURL())
+              mailer.welcome(signUpData.email, routes.Auth.signUp(token.id).absoluteURL())
               Ok(finishSignUpTemplate(user))
             }
         }
@@ -124,11 +124,8 @@ class Auth @Inject()(val cc: ControllerComponents,
     )
   }
 
-  def signUp(tokenId: String) = Action.async { implicit request =>
-    val eventualMaybeToken = Try(UUID.fromString(tokenId))
-      .map(id => userTokenService.find(id))
-      .getOrElse(Future.successful(None))
-    eventualMaybeToken.flatMap {
+  def signUp(tokenId: UUID) = Action.async { implicit request =>
+    userTokenService.find(tokenId).flatMap {
       case None =>
         Future.successful(NotFound(notFoundTemplate(request)))
       case Some(token) if token.isSignUp && !token.isExpired =>
@@ -198,35 +195,29 @@ class Auth @Inject()(val cc: ControllerComponents,
         case Some(UserIdentity(user)) => for {
           token <- userTokenService.save(UserToken.create(user.id, email, isSignUp = false))
         } yield {
-          mailer.resetPassword(email, link = routes.Auth.resetPassword(token.id.toString).absoluteURL())
+          mailer.resetPassword(email, link = routes.Auth.resetPassword(token.id).absoluteURL())
           Redirect(routes.Auth.signIn).flashing("error" -> Messages("reset.instructions", email))
         }
       }
     )
   }
 
-  def resetPassword(token: String) = Action.async { implicit request =>
-    val eventualMaybeToken = Try(UUID.fromString(token))
-      .map(id => userTokenService.find(id))
-      .getOrElse(Future.successful(None))
-    eventualMaybeToken.flatMap {
+  def resetPassword(tokenId: UUID) = Action.async { implicit request =>
+    userTokenService.find(tokenId).flatMap {
       case None =>
         Future.successful(NotFound(notFoundTemplate(request)))
       case Some(token) if token.isSignUp || token.isExpired =>
         userTokenService.remove(token.id).map { _ => NotFound(notFoundTemplate(request)) }
       case Some(token) =>
-        Future.successful(Ok(resetPasswordTemplate(token.id.toString, resetPasswordForm)))
+        Future.successful(Ok(resetPasswordTemplate(token.id, resetPasswordForm)))
     }
   }
 
-  def handleResetPassword(tokenId: String) = Action.async { implicit request =>
+  def handleResetPassword(tokenId: UUID) = Action.async { implicit request =>
     resetPasswordForm.bindFromRequest.fold(
       bogusForm => Future.successful(BadRequest(resetPasswordTemplate(tokenId, bogusForm))),
       newPassword => {
-        val eventualMaybeToken = Try(UUID.fromString(tokenId))
-          .map(id => userTokenService.find(id))
-          .getOrElse(Future.successful(None))
-        eventualMaybeToken.flatMap {
+        userTokenService.find(tokenId).flatMap {
           case None =>
             Future.successful(NotFound(notFoundTemplate(request)))
           case Some(token) if token.isSignUp || token.isExpired =>
@@ -254,7 +245,7 @@ class Auth @Inject()(val cc: ControllerComponents,
           case Some(UserIdentity(user)) if !user.isConfirmed =>
             val token = UserToken.create(user.id, email, isSignUp = true)
             userTokenService.save(token).map { _ =>
-              mailer.welcome(email, routes.Auth.signUp(token.id.toString).absoluteURL())
+              mailer.welcome(email, routes.Auth.signUp(token.id).absoluteURL())
               Ok(finishResendTemplate(email))
             }
           case _ =>
