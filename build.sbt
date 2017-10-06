@@ -27,6 +27,8 @@ fork in Test := true
 
 libraryDependencies ++= Seq(
   guice,
+  "com.typesafe.play" %% "play-mailer" % "6.0.1",
+  "com.typesafe.play" %% "play-mailer-guice" % "6.0.1",
   "org.postgresql" % "postgresql" % "42.1.4",
   "org.webjars" %% "webjars-play" % "2.6.2",
   "org.webjars" % "jquery" % "3.2.1",

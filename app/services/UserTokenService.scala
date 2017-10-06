@@ -10,7 +10,7 @@ import scala.concurrent.Future
 class UserTokenService @Inject()(userTokenDao: UserTokenDAO) {
   def find(id: UUID): Future[Option[UserToken]] = userTokenDao.lookup(id)
 
-  def save(token: UserToken): Future[Int] = userTokenDao.create(token)
+  def save(token: UserToken): Future[UserToken] = userTokenDao.create(token)
 
   def remove(id: UUID): Future[Int] = userTokenDao.delete(id)
 }

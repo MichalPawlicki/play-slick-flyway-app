@@ -26,7 +26,13 @@ class PasswordInfoService @Inject()(passwordHasher: PasswordHasher,
 
   def update(loginInfo: LoginInfo, authInfo: PasswordInfo): Future[PasswordInfo] = ???
 
-  def save(loginInfo: LoginInfo, authInfo: PasswordInfo): Future[PasswordInfo] = ???
+  def save(loginInfo: LoginInfo, authInfo: PasswordInfo): Future[PasswordInfo] = {
+    for {
+      userIdentity <- userIdentityService.retrieve(loginInfo).map(_.get)
+      updatedUser = userIdentity.user.copy(passwordHash = authInfo.password)
+      _ <- userDAO.update(updatedUser)
+    } yield authInfo
+  }
 
   def remove(loginInfo: LoginInfo): Future[Unit] = ???
 }

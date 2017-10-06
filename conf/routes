@@ -11,10 +11,10 @@ GET     /auth/signup                controllers.Auth.startSignUp
 POST    /auth/signup                controllers.Auth.handleStartSignUp
 GET     /auth/signup/:token         controllers.Auth.signUp(token: String)
 
-# GET     /auth/reset                 controllers.Auth.startResetPassword
-# POST    /auth/reset                 controllers.Auth.handleStartResetPassword
-# GET     /auth/reset/:token          controllers.Auth.resetPassword(token:String)
-# POST    /auth/reset/:token          controllers.Auth.handleResetPassword(token:String)
+GET     /auth/reset                 controllers.Auth.startResetPassword
+POST    /auth/reset                 controllers.Auth.handleStartResetPassword
+GET     /auth/reset/:token          controllers.Auth.resetPassword(token:String)
+POST    /auth/reset/:token          controllers.Auth.handleResetPassword(token: String)
 
 GET     /auth/signin                controllers.Auth.signIn
 POST    /auth/authenticate          controllers.Auth.authenticate

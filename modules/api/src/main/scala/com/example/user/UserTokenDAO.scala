@@ -15,7 +15,7 @@ trait UserTokenDAO {
 
   def delete(id: UUID): Future[Int]
 
-  def create(userToken: UserToken): Future[Int]
+  def create(userToken: UserToken): Future[UserToken]
 
   def close(): Future[Unit]
 }

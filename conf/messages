@@ -61,7 +61,7 @@ signin.resetPassword=Forgot your password? <a href="{0}">Reset</a> it.
 signin.social=Or use one of the following services to sign in:
 
 reset.title=Reset password
-reset.startLegend=Have you forgot your password?
+reset.startLegend=Have you forgotten your password?
 reset.email=Email
 reset.submit=Submit
 reset.instructions=We''ve sent you an email to {0} with instructions to reset your password.
@@ -71,7 +71,7 @@ reset.verifyPassword=Verify password
 reset.reset=Reset
 reset.doneTitle=Password reset completed
 reset.done=Your password has been reset.
-reset.gotoIndex=Goto to the <a href={0}>main page</a>.
+reset.signIn=You can now <a href={0}>log in</a>.
 
 error.accessDenied=You need to log in to access the requested page
 error.notFound=The requested page couldn''t be found:
