@@ -41,8 +41,8 @@ class SlickUserTokenDAO @Inject()(db: Database)(implicit ec: ExecutionContext) e
 
   def create(userToken: UserToken): Future[UserToken] = {
     db.run(
-      UserTokens.returning(UserTokens) += userTokenToRow(userToken)
-    ).map(rowToUserToken)
+      UserTokens += userTokenToRow(userToken)
+    ).map(_ => userToken)
   }
 
   def close(): Future[Unit] = {

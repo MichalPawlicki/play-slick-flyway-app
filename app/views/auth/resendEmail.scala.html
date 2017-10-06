@@ -1,0 +1,18 @@
+@this(mainAuth: views.html.templates.mainAuth)
+
+@(form: Form[String])(implicit request: RequestHeader, messages: Messages)
+
+@implicitFieldConstructor = @{b3.horizontal.fieldConstructor("col-md-3","col-md-6")}
+
+@mainAuth(title = Messages("resend.title"), tab = "signin") {
+
+  @b3.form(routes.Auth.handleResendEmail) {
+    <fieldset>
+      <legend>@Messages("resend.legend")</legend>
+      @helper.CSRF.formField
+
+      @b3.email(form("email"), '_label -> Messages("resend.email"), 'placeholder -> Messages("resend.email"), 'autofocus -> true)
+      @b3.submit('class -> "btn btn-primary") { @Messages("resend.submit") }
+    </fieldset>
+  }
+}

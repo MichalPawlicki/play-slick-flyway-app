@@ -28,6 +28,14 @@ class Mailer @Inject()(configuration: Configuration, mailerClient: MailerClient)
     ()
   }
 
+  def welcome(email: String, link: String)(implicit messages: Messages): Future[Unit] = {
+    sendEmailAsync(email)(
+      subject = Messages("mail.welcome.subject"),
+      bodyHtml = Some(views.html.mails.welcome(email, link).toString),
+      bodyText = Some(views.html.mails.welcomeText(email, link).toString)
+    )
+  }
+
   def resetPassword(email: String, link: String)(implicit messages: Messages): Future[Unit] = {
     sendEmailAsync(email)(
       subject = Messages("mail.reset.subject"),

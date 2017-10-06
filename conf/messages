@@ -58,6 +58,7 @@ signin.submit=Sign in
 signin.rememberMe=Remember me
 signin.signup=Don''t have an account? <a href="{0}">Sign up</a> now.
 signin.resetPassword=Forgot your password? <a href="{0}">Reset</a> it.
+signin.resendEmail=Lost your activation email? <a href="{0}">Resend</a> it.
 signin.social=Or use one of the following services to sign in:
 
 reset.title=Reset password
@@ -88,6 +89,14 @@ error.onlyHttpsAllowed=Only https allowed!
 error.onlyHttpsAllowedMsg=Only https access is allowed. Try <a href={0}>{0}</a>.
 error.profileError=Error getting profile data
 error.profileUnauth=Can't access profile information: must authenticate first.
+
+resend.title=Resend activation link
+resend.legend=Resend the activation link
+resend.email=Email
+resend.submit=Resend
+
+finishResend.title=Finish sign up
+finishResend.instructions=We''ve sent you an email to {0}. Follow the instructions to complete the sign up process.
 
 mail.welcome.subject=Welcome
 mail.welcome.hi=Hello, {0}!

@@ -38,8 +38,6 @@ object AuthForms {
       mapping(
         "email" -> email,
         "password" -> newPasswordField
-        //    "firstName" -> nonEmptyText,
-        //    "lastName" -> nonEmptyText
       )
       ((email, password) => SignUpData(email, password._1))
       (signUpData => Some((signUpData.email, ("", ""))))
@@ -84,7 +82,9 @@ class Auth @Inject()(val cc: ControllerComponents,
                      startResetPasswordTemplate: views.html.auth.startResetPassword,
                      resetPasswordInstructionsTemplate: views.html.auth.resetPasswordInstructions,
                      resetPasswordTemplate: views.html.auth.resetPassword,
-                     resetPasswordDoneTemplate: views.html.auth.resetPasswordDone)
+                     resetPasswordDoneTemplate: views.html.auth.resetPasswordDone,
+                     resendEmailTemplate: views.html.auth.resendEmail,
+                     finishResendTemplate: views.html.auth.finishResend)
                     (implicit ec: ExecutionContext)
   extends AbstractController(cc)
     with I18nSupport {
@@ -116,7 +116,7 @@ class Auth @Inject()(val cc: ControllerComponents,
               _ <- userIdentityService.save(user)
               _ <- userTokenService.save(token)
             } yield {
-              println(routes.Auth.signUp(token.id.toString).absoluteURL())
+              mailer.welcome(signUpData.email, routes.Auth.signUp(token.id.toString).absoluteURL())
               Ok(finishSignUpTemplate(user))
             }
         }
@@ -236,6 +236,29 @@ class Auth @Inject()(val cc: ControllerComponents,
             for {
               _ <- authInfoRepository.save(loginInfo, passwordHasher.hash(newPassword))
             } yield Ok(resetPasswordDoneTemplate())
+        }
+      }
+    )
+  }
+
+  def resendEmail = Action { implicit request =>
+    Ok(resendEmailTemplate(emailForm))
+  }
+
+  def handleResendEmail = Action.async { implicit request =>
+    emailForm.bindFromRequest.fold(
+      bogusForm => Future.successful(BadRequest(resendEmailTemplate(bogusForm))),
+      email => {
+        val loginInfo = LoginInfo(CredentialsProvider.ID, email)
+        userIdentityService.retrieve(loginInfo).flatMap {
+          case Some(UserIdentity(user)) if !user.isConfirmed =>
+            val token = UserToken.create(user.id, email, isSignUp = true)
+            userTokenService.save(token).map { _ =>
+              mailer.welcome(email, routes.Auth.signUp(token.id.toString).absoluteURL())
+              Ok(finishResendTemplate(email))
+            }
+          case _ =>
+            Future.successful(Ok(finishResendTemplate(email)))
         }
       }
     )
