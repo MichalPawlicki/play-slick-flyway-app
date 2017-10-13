@@ -2,7 +2,7 @@ package controllers
 
 import javax.inject.{Inject, Singleton}
 
-import auth.SessionEnv
+import _root_.auth.SessionEnv
 import com.example.user.UserDAO
 import com.mohiva.play.silhouette.api.Silhouette
 import play.api.i18n.I18nSupport

@@ -1,3 +1,5 @@
+@import controllers.auth.AuthForms
+
 @this(mainAuth: views.html.templates.mainAuth)
 
 @(signInForm: Form[AuthForms.SignInData])(implicit request: RequestHeader, messages: Messages)
@@ -8,7 +10,7 @@
   @request.flash.get("error").map { msg =>
     @errors.alert(msg, "error")
   }
-  @b3.form(routes.Auth.authenticate) {
+  @b3.form(controllers.auth.routes.Auth.authenticate) {
     <fieldset>
       <legend>@Messages("signin.legend")</legend>
       @helper.CSRF.formField
@@ -28,9 +30,9 @@
 
       @b3.submit('class -> "btn btn-primary"){ @Messages("signin.submit") }
       <div class="post-form-opts">
-        <p>@Html(Messages("signin.signup", routes.Auth.startSignUp))</p>
-        <p>@Html(Messages("signin.resetPassword", routes.Auth.startResetPassword))</p>
-        <p>@Html(Messages("signin.resendEmail", routes.Auth.resendEmail))</p>
+        <p>@Html(Messages("signin.signup", controllers.auth.routes.Auth.startSignUp))</p>
+        <p>@Html(Messages("signin.resetPassword", controllers.auth.routes.Auth.startResetPassword))</p>
+        <p>@Html(Messages("signin.resendEmail", controllers.auth.routes.Auth.resendEmail))</p>
       </div>
     </fieldset>
   }

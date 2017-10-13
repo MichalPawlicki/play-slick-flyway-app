@@ -1,4 +1,4 @@
-package controllers
+package controllers.auth
 
 import java.util.UUID
 import javax.inject.{Inject, Singleton}
@@ -92,7 +92,7 @@ class Auth @Inject()(val cc: ControllerComponents,
 
   def startSignUp = silhouette.UserAwareAction.async { implicit request =>
     Future.successful(request.identity match {
-      case Some(user) => Redirect(routes.Home.index())
+      case Some(user) => Redirect(controllers.routes.Home.index())
       case None => Ok(startSignUpTemplate(signUpForm))
     })
   }
@@ -115,7 +115,7 @@ class Auth @Inject()(val cc: ControllerComponents,
               _ <- userIdentityService.save(user)
               _ <- userTokenService.save(token)
             } yield {
-              mailer.welcome(email, routes.Auth.signUp(token.id).absoluteURL())
+              mailer.welcome(email, controllers.auth.routes.Auth.signUp(token.id).absoluteURL())
               Ok(finishSignUpTemplate(email))
             }
         }
@@ -137,7 +137,7 @@ class Auth @Inject()(val cc: ControllerComponents,
               value <- silhouette.env.authenticatorService.init(authenticator)
               _ <- userIdentityService.confirm(loginInfo)
               _ <- userTokenService.remove(token.id)
-              result <- silhouette.env.authenticatorService.embed(value, Redirect(routes.Home.index()))
+              result <- silhouette.env.authenticatorService.embed(value, Redirect(controllers.routes.Home.index()))
             } yield result
         }
       case Some(token) =>
@@ -147,7 +147,7 @@ class Auth @Inject()(val cc: ControllerComponents,
 
   def signIn = silhouette.UserAwareAction.async { implicit request =>
     Future.successful(request.identity match {
-      case Some(user) => Redirect(routes.Home.index())
+      case Some(user) => Redirect(controllers.routes.Home.index())
       case None => Ok(signInTemplate(signInForm))
     })
   }
@@ -158,7 +158,7 @@ class Auth @Inject()(val cc: ControllerComponents,
       signInData => {
         val credentials = Credentials(signInData.email, signInData.password)
         val cannotAuthenticateResponse =
-          Redirect(routes.Auth.signIn()).flashing("error" -> Messages("error.cannotAuthenticate"))
+          Redirect(controllers.auth.routes.Auth.signIn()).flashing("error" -> Messages("error.cannotAuthenticate"))
         credentialsProvider.authenticate(credentials).flatMap { loginInfo =>
           userIdentityService.retrieve(loginInfo).flatMap {
             case None =>
@@ -169,7 +169,7 @@ class Auth @Inject()(val cc: ControllerComponents,
               for {
                 authenticator <- silhouette.env.authenticatorService.create(loginInfo)
                 value <- silhouette.env.authenticatorService.init(authenticator)
-                result <- silhouette.env.authenticatorService.embed(value, Redirect(routes.Home.index()))
+                result <- silhouette.env.authenticatorService.embed(value, Redirect(controllers.routes.Home.index()))
               } yield result
           }
         }.recover {
@@ -180,7 +180,7 @@ class Auth @Inject()(val cc: ControllerComponents,
   }
 
   def signOut = silhouette.SecuredAction.async { implicit request =>
-    silhouette.env.authenticatorService.discard(request.authenticator, Redirect(routes.Home.index()))
+    silhouette.env.authenticatorService.discard(request.authenticator, Redirect(controllers.routes.Home.index()))
   }
 
   def startResetPassword = Action { implicit request =>
@@ -191,12 +191,12 @@ class Auth @Inject()(val cc: ControllerComponents,
     emailForm.bindFromRequest.fold(
       bogusForm => Future.successful(BadRequest(startResetPasswordTemplate(bogusForm))),
       email => userIdentityService.retrieve(LoginInfo(CredentialsProvider.ID, email)).flatMap {
-        case None => Future.successful(Redirect(routes.Auth.startResetPassword()).flashing("error" -> Messages("error.noUser")))
+        case None => Future.successful(Redirect(controllers.auth.routes.Auth.startResetPassword()).flashing("error" -> Messages("error.noUser")))
         case Some(UserIdentity(user)) => for {
           token <- userTokenService.save(UserToken.create(user.id, email, isSignUp = false))
         } yield {
-          mailer.resetPassword(email, link = routes.Auth.resetPassword(token.id).absoluteURL())
-          Redirect(routes.Auth.signIn).flashing("error" -> Messages("reset.instructions", email))
+          mailer.resetPassword(email, link = controllers.auth.routes.Auth.resetPassword(token.id).absoluteURL())
+          Redirect(controllers.auth.routes.Auth.signIn).flashing("error" -> Messages("reset.instructions", email))
         }
       }
     )
@@ -226,6 +226,7 @@ class Auth @Inject()(val cc: ControllerComponents,
             val loginInfo = LoginInfo(CredentialsProvider.ID, token.email)
             for {
               _ <- authInfoRepository.save(loginInfo, passwordHasher.hash(newPassword))
+              _ <- userTokenService.remove(token.id)
             } yield Ok(resetPasswordDoneTemplate())
         }
       }
@@ -245,7 +246,7 @@ class Auth @Inject()(val cc: ControllerComponents,
           case Some(UserIdentity(user)) if !user.isConfirmed =>
             val token = UserToken.create(user.id, email, isSignUp = true)
             userTokenService.save(token).map { _ =>
-              mailer.welcome(email, routes.Auth.signUp(token.id).absoluteURL())
+              mailer.welcome(email, controllers.auth.routes.Auth.signUp(token.id).absoluteURL())
               Ok(finishResendTemplate(email))
             }
           case _ =>

@@ -7,8 +7,8 @@
     <li><a href="@routes.Home.index">@Messages("navbar.index")</a></li>
   </ul>
   <ul class="nav navbar-nav navbar-right">
-    <li class="@("active".when(tab == "signin"))"><a href="@routes.Auth.signIn">@Messages("navbar.signin")</a></li>
-    <li class="@("active".when(tab == "signup"))"><a href="@routes.Auth.startSignUp">@Messages("navbar.signup")</a></li>
+    <li class="@("active".when(tab == "signin"))"><a href="@controllers.auth.routes.Auth.signIn">@Messages("navbar.signin")</a></li>
+    <li class="@("active".when(tab == "signup"))"><a href="@controllers.auth.routes.Auth.startSignUp">@Messages("navbar.signup")</a></li>
   </ul>
 }
 

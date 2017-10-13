@@ -6,7 +6,7 @@
 
 @mainAuth(title = Messages("resend.title"), tab = "signin") {
 
-  @b3.form(routes.Auth.handleResendEmail) {
+  @b3.form(controllers.auth.routes.Auth.handleResendEmail) {
     <fieldset>
       <legend>@Messages("resend.legend")</legend>
       @helper.CSRF.formField

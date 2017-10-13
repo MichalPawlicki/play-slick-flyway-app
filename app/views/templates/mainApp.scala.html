@@ -18,10 +18,10 @@
       @loginInfo.map { loginInfo =>
         <li class="navbar-text">@Messages("navbar.username", user.email)</li>
       }
-      <li><a href="@routes.Auth.signOut">@Messages("navbar.signout")</a></li>
+      <li><a href="@controllers.auth.routes.Auth.signOut">@Messages("navbar.signout")</a></li>
     }.getOrElse {
-      <li class="@("active".when(tab == "signin"))"><a href="@routes.Auth.signIn">@Messages("navbar.signin")</a></li>
-      <li class="@("active".when(tab == "signup"))"><a href="@routes.Auth.startSignUp">@Messages("navbar.signup")</a></li>
+      <li class="@("active".when(tab == "signin"))"><a href="@controllers.auth.routes.Auth.signIn">@Messages("navbar.signin")</a></li>
+      <li class="@("active".when(tab == "signup"))"><a href="@controllers.auth.routes.Auth.startSignUp">@Messages("navbar.signup")</a></li>
     }
   </ul>
 }

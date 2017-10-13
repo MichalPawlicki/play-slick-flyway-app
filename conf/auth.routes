@@ -1,0 +1,18 @@
+# Authentication routes
+
+GET     /signup                controllers.auth.Auth.startSignUp
+POST    /signup                controllers.auth.Auth.handleStartSignUp
+GET     /signup/:token         controllers.auth.Auth.signUp(token: java.util.UUID)
+
+GET     /reset                 controllers.auth.Auth.startResetPassword
+POST    /reset                 controllers.auth.Auth.handleStartResetPassword
+GET     /reset/:token          controllers.auth.Auth.resetPassword(token: java.util.UUID)
+POST    /reset/:token          controllers.auth.Auth.handleResetPassword(token: java.util.UUID)
+
+GET     /signin                controllers.auth.Auth.signIn
+POST    /authenticate          controllers.auth.Auth.authenticate
+# GET     /social/:providerId    controllers.auth.Auth.socialAuthenticate(providerId: String)
+GET     /signout               controllers.auth.Auth.signOut
+
+GET     /resend                controllers.auth.Auth.resendEmail
+POST    /resend                controllers.auth.Auth.handleResendEmail
